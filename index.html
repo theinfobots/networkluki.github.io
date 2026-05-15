@@ -744,6 +744,15 @@
           <li><span class="infoName">Based in</span>: Sweden</li>
           <li><span class="infoName">Age</span>: <span id="age"></span> y/o</li>
           <li><span class="infoName">Years left</span>: <span id="years-left"></span></li>
+          <li><span class="infoName">Born on</span>: <span id="birth-day"></span></li>
+          <li><span class="infoName">Total days alive</span>: <span id="total-days"></span></li>
+          <li><span class="infoName">Total hours alive</span>: <span id="total-hours"></span></li>
+          <li><span class="infoName">Total minutes alive</span>: <span id="total-minutes"></span></li>
+          <li><span class="infoName">Zodiac</span>: <span id="zodiac"></span></li>
+          <li><span class="infoName">Chinese zodiac</span>: <span id="chinese-zodiac"></span></li>
+          <li><span class="infoName">Generation</span>: <span id="generation"></span></li>
+          <li><span class="infoName">Days to birthday</span>: <span id="days-to-birthday"></span></li>
+          <li><span class="infoName">Next birthday</span>: <span id="next-birthday-day"></span></li>
         </ul>
 
         <p class="tagline">
@@ -1055,6 +1064,162 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     initSpaceWarp();
+});
+
+"use strict";
+
+// Settings and calculations
+const birthDateStr = "1997-02-13";
+const birthDate = parseLocalDate(birthDateStr);
+const today = startOfDay(new Date());
+
+const daysSv = {
+    Monday: "Måndag",
+    Tuesday: "Tisdag",
+    Wednesday: "Onsdag",
+    Thursday: "Torsdag",
+    Friday: "Fredag",
+    Saturday: "Lördag",
+    Sunday: "Söndag"
+};
+
+function parseLocalDate(dateStr) {
+    const parts = dateStr.split("-").map(Number);
+
+    if (parts.length !== 3 || parts.some(Number.isNaN)) {
+        throw new Error("Invalid date format. Expected YYYY-MM-DD.");
+    }
+
+    const [year, month, day] = parts;
+    return new Date(year, month - 1, day);
+}
+
+function startOfDay(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function getEnglishDayName(date) {
+    return date.toLocaleDateString("en-US", { weekday: "long" });
+}
+
+function getSwedishDayName(date) {
+    const englishDay = getEnglishDayName(date);
+    return daysSv[englishDay] ?? "Okänd";
+}
+
+function getAge(birthDate, today) {
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    const birthdayThisYear = new Date(
+        today.getFullYear(),
+        birthDate.getMonth(),
+        birthDate.getDate()
+    );
+
+    if (today < birthdayThisYear) {
+        age -= 1;
+    }
+
+    return age;
+}
+
+function getTotalDays(birthDate, today) {
+    const birthUTC = Date.UTC(
+        birthDate.getFullYear(),
+        birthDate.getMonth(),
+        birthDate.getDate()
+    );
+
+    const todayUTC = Date.UTC(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+    );
+
+    return Math.floor((todayUTC - birthUTC) / 86400000);
+}
+
+function getZodiac(date) {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) {
+        return "Vattumannen";
+    }
+
+    return "Annat";
+}
+
+function getNextBirthday(birthDate, today) {
+    let nextBirthday = new Date(
+        today.getFullYear(),
+        birthDate.getMonth(),
+        birthDate.getDate()
+    );
+
+    if (nextBirthday < today) {
+        nextBirthday = new Date(
+            today.getFullYear() + 1,
+            birthDate.getMonth(),
+            birthDate.getDate()
+        );
+    }
+
+    return nextBirthday;
+}
+
+// 1. Age and weekday
+const age = getAge(birthDate, today);
+const birthDayOfWeek = getSwedishDayName(birthDate);
+
+// 2. Life statistics
+const totalDays = getTotalDays(birthDate, today);
+const totalHours = totalDays * 24;
+const totalMinutes = totalHours * 60;
+
+// 3. Zodiac
+const zodiac = getZodiac(birthDate);
+const chineseZodiac = "Oxen";
+const generation = "Gen Z";
+
+// 4. Future
+const yearsTo100 = Math.max(0, 100 - age);
+const nextBirthday = getNextBirthday(birthDate, today);
+
+let daysToBirthday = getTotalDays(today, nextBirthday);
+
+if (
+    today.getMonth() === birthDate.getMonth() &&
+    today.getDate() === birthDate.getDate()
+) {
+    daysToBirthday = 0;
+}
+
+const nextBirthdayDay = getSwedishDayName(nextBirthday);
+
+// Optional: write to HTML elements
+document.addEventListener("DOMContentLoaded", () => {
+    const values = {
+        age,
+        "years-left": yearsTo100,
+        "birth-day": birthDayOfWeek,
+        "total-days": totalDays,
+        "total-hours": totalHours,
+        "total-minutes": totalMinutes,
+        zodiac,
+        "chinese-zodiac": chineseZodiac,
+        generation,
+        "days-to-birthday": daysToBirthday,
+        "next-birthday-day": nextBirthdayDay
+    };
+
+    for (const [id, value] of Object.entries(values)) {
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.textContent = String(value);
+        }
+    }
 });
 </script>
 </body>
