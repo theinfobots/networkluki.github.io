@@ -1,1 +1,111 @@
-body { background-color: #000; color: #27F584; font-family: monospace, sans-serif; }
+:root {
+  --bg: #050505;
+  --panel-bg: #0b0f0c;
+  --text: #27f584;
+  --text-soft: #9fffc4;
+  --muted: #6fdc9b;
+  --border: rgba(39, 245, 132, 0.35);
+  --shadow: rgba(39, 245, 132, 0.18);
+  --max-width: 760px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 2rem;
+  background:
+    radial-gradient(circle at top, rgba(39, 245, 132, 0.08), transparent 35%),
+    var(--bg);
+  color: var(--text);
+  font-family: "Ubuntu", monospace, sans-serif;
+  line-height: 1.6;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 0 35px var(--shadow);
+}
+
+h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 12px var(--shadow);
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+.profile-list {
+  list-style: none;
+  margin: 1.5rem 0;
+  padding: 0;
+}
+
+.profile-list li {
+  display: grid;
+  grid-template-columns: minmax(130px, 180px) 1fr;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(39, 245, 132, 0.12);
+}
+
+.infoName {
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.tagline {
+  margin-top: 1.5rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+::selection {
+  background: var(--text);
+  color: #000;
+}
+
+a {
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+
+  .container {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .profile-list li {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}
