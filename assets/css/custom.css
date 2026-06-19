@@ -4,9 +4,7 @@ body {
   background-color: #2C001E;
 }
 
-span.alias{
-  text-transform: lowercase;
-}
+span.alias{}
 
 .workspace {
   margin: 0;
