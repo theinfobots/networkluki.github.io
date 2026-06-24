@@ -43,23 +43,39 @@
         </section>
 
 <h2>Recent Changes</h2>
-<div id="commits"></div>
+<div id="commits">Loading recent changes...</div>
 
 <script>
-fetch("https://api.github.com/repos/networkluki/networkluki.github.io/commits")
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById("commits");
+const commitsBox = document.getElementById("commits");
 
-    data.slice(0, 10).forEach(commit => {
-      container.innerHTML += `
+fetch("https://api.github.com/repos/networkluki/networkluki.github.io/commits?per_page=5")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("GitHub API rate limit or request error");
+    }
+    return response.json();
+  })
+  .then(commits => {
+    commitsBox.innerHTML = "";
+
+    commits.forEach(item => {
+      const date = new Date(item.commit.author.date).toLocaleDateString("sv-SE");
+      const message = item.commit.message;
+
+      commitsBox.innerHTML += `
         <div>
-          <strong>${commit.commit.message}</strong><br>
-          ${commit.commit.author.date}
+          <strong>${message}</strong><br>
+          <small>${date}</small>
           <hr>
         </div>
       `;
     });
+  })
+  .catch(() => {
+    commitsBox.innerHTML = `
+      <p>Recent changes could not be loaded right now.</p>
+      <p>GitHub API rate limit may have been reached.</p>
+    `;
   });
 </script>
         
