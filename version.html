@@ -41,6 +41,28 @@
                 <li><strong>Major:</strong> v2.0.0 - big redesign or breaking changes.</li>
             </ul>
         </section>
+
+<h2>Recent Changes</h2>
+<div id="commits"></div>
+
+<script>
+fetch("https://api.github.com/repos/networkluki/networkluki.github.io/commits")
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById("commits");
+
+    data.slice(0, 10).forEach(commit => {
+      container.innerHTML += `
+        <div>
+          <strong>${commit.commit.message}</strong><br>
+          ${commit.commit.author.date}
+          <hr>
+        </div>
+      `;
+    });
+  });
+</script>
+        
     </main>
 
     <footer>
